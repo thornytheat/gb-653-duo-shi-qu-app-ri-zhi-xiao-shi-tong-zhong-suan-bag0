@@ -1,0 +1,30 @@
+{% extends "base.html" %}{% block content %}
+<div class="grid module-7">
+<section class="panel panel--primary">
+<div class="panel__head"><h2>交付回读</h2><span class="panel__meta">M7 · 待生成 / 可领取 / 已撤销 / 交付范围</span></div>
+<div class="panel__body panel__body--scroll">
+<table class="ledger"><thead><tr><th>状态</th><th>包</th><th>服务</th><th>授权</th><th>进度</th></tr></thead><tbody>
+{% for key, label in [('pending','待生成'),('claimable','可领取'),('revoked','已撤销'),('expired','已过期')] %}{% for item in data[key] %}
+<tr><td>{{ label }}</td><td>{{ item.package_id }}</td><td>{{ item.service }}</td><td>{{ item.grant_id }}</td><td class="num">{{ item.cursor }}/{{ item.total_buckets }}</td></tr>
+{% endfor %}{% endfor %}
+{% if not data.pending and not data.claimable and not data.revoked and not data.expired %}<tr><td colspan="5">暂无交付包</td></tr>{% endif %}
+</tbody></table>
+</div></section>
+<div class="stack">
+<section class="panel"><div class="panel__head"><h2>交付范围</h2><span class="panel__meta">授权服务计数</span></div><div class="panel__body panel__body--scroll">
+<table class="ledger"><thead><tr><th>授权</th><th>服务</th><th>状态</th><th>包含行</th><th>一致</th></tr></thead><tbody>
+{% for scope in data.scope if scope %}<tr><td>{{ scope.grant_id }}</td><td>{{ scope.service }}</td><td>{{ scope.grant_state }}</td>
+{% if scope.packages %}<td class="num">{{ scope.packages[0].scope.included_rows|default('-') }}</td><td>{{ scope.packages[0].scope.counts_match|default('-') }}</td>
+{% else %}<td class="num">-</td><td>-</td>{% endif %}</tr>
+{% else %}<tr><td colspan="5">暂无授权</td></tr>{% endfor %}
+</tbody></table></div></section>
+<section class="panel"><div class="panel__head"><h2>接口</h2><span class="panel__meta">权限分离</span></div><div class="panel__body">
+<pre class="result">管理：POST /api/delivery/batches
+管理：POST /api/delivery/grants
+管理：POST /api/delivery/grants/{grant_id}/packages
+管理：POST /api/delivery/grants/{grant_id}/revoke
+审计：GET  /api/audit/batches/{batch_id}/original
+受限：GET  /api/delivery/downloads/{token}
+回读：GET  /api/delivery/readback</pre></div></section>
+</div></div>
+{% endblock %}

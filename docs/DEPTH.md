@@ -2,7 +2,7 @@
 
         - 规模：中型
         - 核心规则：事件先归一到 UTC，DST 重叠时保留 fold；小时桶右端开，水位只能前进且迟到事件仍进入修订。
-        - 使用者与工作流：导入随仓样例，逐模块复核，最后导出单一证据清单。
+        - 使用者与工作流：导入随仓样例，逐模块复核；需要交付时导入实际日志，按服务签发授权并核验受限副本，原件以独立审计权限核对。
 
         ## 功能模块
 
@@ -14,6 +14,7 @@
 | M4 小时分桶 | 运行样例并复核证据 | `/api/buckets/rebuild` / `/buckets` | `app/modules/m4_buckets/core.py` `app/modules/m4_buckets/service.py` | `tests/test_m4_buckets.py` |
 | M5 迟到修订 | 运行样例并复核证据 | `/api/watermark/advance` / `/watermark` | `app/modules/m5_watermark/core.py` `app/modules/m5_watermark/service.py` | `tests/test_m5_watermark.py` |
 | M6 批次对账 | 运行样例并复核证据 | `/api/export/buckets.csv` / `/runs` | `app/modules/m6_runs/core.py` `app/modules/m6_runs/service.py` | `tests/test_m6_runs.py` |
+| M7 按服务交付 | 导入实际日志、按服务授权并核验受限副本 | `/api/delivery/*` / `/delivery` | `app/modules/m7_delivery/core.py` `app/modules/m7_delivery/store.py` `app/modules/m7_delivery/service.py` `app/modules/m7_delivery/handler.py` | `tests/test_m7_delivery.py` |
 
         ## 陷阱登记
 
